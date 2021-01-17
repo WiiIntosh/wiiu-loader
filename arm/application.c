@@ -124,7 +124,7 @@ static size_t search_for_profile(const char* name) {
 /*	If not, find the first unused slot and initialise it */
 	for (size_t i = 0; i < NUM_PROFILES; i++) {
 		if (!profiles[i].enabled) {
-			strncpy(profiles[i].name, name, sizeof(profiles[i].name));
+			strlcpy(profiles[i].name, name, sizeof(profiles[i].name));
 			profiles[i].enabled = true;
 			return i;
 		}
@@ -135,7 +135,7 @@ static size_t search_for_profile(const char* name) {
 static int config_handler(void* user, const char* section, const char* name, const char* value) {
 	if (strcmp("loader", section) == 0) {
 		if (strcmp("default", name) == 0) {
-			strncpy(ldrConfig.defaultProfile, value, sizeof(ldrConfig.defaultProfile));
+			strlcpy(ldrConfig.defaultProfile, value, sizeof(ldrConfig.defaultProfile));
 		}
 	} else if (strncmp("profile:", section, 8) == 0) {
 		size_t ndx = search_for_profile(section + 8);
@@ -144,11 +144,11 @@ static int config_handler(void* user, const char* section, const char* name, con
 			return 0;
 		}
 		if (strcmp("name", name) == 0) {
-			strncpy(profiles[ndx].humanName, value, sizeof(profiles[ndx].humanName));
+			strlcpy(profiles[ndx].humanName, value, sizeof(profiles[ndx].humanName));
 		} else if (strcmp("kernel", name) == 0) {
-			strncpy(profiles[ndx].kernelPath, value, sizeof(profiles[ndx].kernelPath));
+			strlcpy(profiles[ndx].kernelPath, value, sizeof(profiles[ndx].kernelPath));
 		} else if (strcmp("cmdline", name) == 0) {
-			strncpy(profiles[ndx].kernelCmd, value, sizeof(profiles[ndx].kernelCmd));
+			strlcpy(profiles[ndx].kernelCmd, value, sizeof(profiles[ndx].kernelCmd));
 		}
 	}
 	return 1;
@@ -183,7 +183,7 @@ void NORETURN app_run() {
 
 	/*	Put kernel commandline at end of memory, ready for the boot wrapper to read */
 		if (strlen(profiles[profileNdx].kernelCmd) > 0) {
-			strncpy(ppc_data->cmdline, profiles[profileNdx].kernelCmd, sizeof(ppc_data->cmdline));
+			strlcpy(ppc_data->cmdline, profiles[profileNdx].kernelCmd, sizeof(ppc_data->cmdline));
 			write32((unsigned int)&ppc_data->magic, WIIU_LOADER_MAGIC);
 		}
 	}
