@@ -28,14 +28,18 @@ seeprom_t seeprom;
 
 void crypto_read_otp(void)
 {
-    u32 *otpd = (u32*)&otp;
+    u8 *otpd = (u8*)&otp;
     int word, bank;
     for (bank = 0; bank < 8; bank++)
     {
         for (word = 0; word < 0x20; word++)
         {
             write32(LT_OTPCMD, 0x80000000 | bank << 8 | word);
-            *otpd++ = read32(LT_OTPDATA);
+            u32 data = read32(LT_OTPDATA);
+            *otpd++ = (data >> 24) & 0xff;
+            *otpd++ = (data >> 16) & 0xff;
+            *otpd++ = (data >>  8) & 0xff;
+            *otpd++ = (data >>  0) & 0xff;
         }
     }
 }
