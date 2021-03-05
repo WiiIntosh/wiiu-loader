@@ -41,8 +41,13 @@ typedef volatile s64 vs64;
 #define NULL ((void *)0)
 
 #define ALWAYS_INLINE __attribute__((always_inline))
-#define SRAM_TEXT __attribute__((section(".sram.text")))
+//gcc will sometimes sneak in memset calls which we 100% don't want in sram
+#define SRAM_TEXT __attribute__((section(".sram.text"))) __attribute__((optimize("no-tree-loop-distribute-patterns")))
 #define SRAM_DATA __attribute__((section(".sram.data")))
+//sometimes gcc will complain about section type conflicts with no further information
+//this works as a workaround
+#define SRAM_DATA2 __attribute__((section(".sram.data2")))
+#define SRAM_STR(str) ({ static const SRAM_DATA2 char __str[] = str; __str; })
 #define NORETURN __attribute__((__noreturn__))
 
 #define ALIGNED(x) __attribute__((aligned(x)))

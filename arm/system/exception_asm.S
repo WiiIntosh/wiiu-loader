@@ -7,6 +7,8 @@
  *  see file COPYING or http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
  */
 
+.section .sram.text
+
 .globl v_undf
 .globl v_swi
 .globl v_instr_abrt
@@ -136,4 +138,3 @@ v_fiq:
     add     sp, sp, #8
     ldmfd   sp!, {lr}
     subs    pc, lr, #4
-

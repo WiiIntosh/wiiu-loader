@@ -15,6 +15,8 @@
 #include "video/gfx.h"
 #include "system/gpio.h"
 #include "system/latte.h"
+#include "system/ppc.h"
+#include "system/irq.h"
 
 #include <stdarg.h>
 
@@ -44,7 +46,7 @@ void hexdump(const void *d, int len) {
 }
 #endif
 
-void udelay(u32 d)
+void SRAM_TEXT udelay(u32 d)
 {
     // should be good to max .2% error
     u32 ticks = d * 19 / 10;
@@ -66,8 +68,11 @@ void udelay(u32 d)
     }
 }
 
-void panic(u8 v)
+void SRAM_TEXT panic(u8 v)
 {
+    (void)v;
+    ppc_hang();
+    irq_kill();
     while(true) {
         //debug_output(v);
         //set32(HW_GPIO1BOUT, GP_SLOTLED);

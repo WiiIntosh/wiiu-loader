@@ -175,7 +175,7 @@ void SRAM_TEXT gfx_draw_string(gfx_screen_t screen, char* str, int x, int y, u32
 	}
 }
 
-void SRAM_TEXT sram_print(char* msg) {
+void SRAM_TEXT sram_print(const char* msg) {
 	int lines = 0;
 	int width = fbs[GFX_DRC].current_x;
 	for (int k = 0; msg[k]; k++) {
@@ -192,6 +192,22 @@ void SRAM_TEXT sram_print(char* msg) {
 
 	fbs[GFX_DRC].current_y += lines;
 	fbs[GFX_DRC].current_x = width;
+}
+
+void SRAM_TEXT sram_print_hex(u32 hex) {
+	char msg[11];
+	msg[0] = '0'; msg[1] = 'x';
+
+	for (int i = 0; i < 8 ; i++) {
+		char digit = (hex >> ((7-i)*4)) & 0xf;
+		digit += (digit < 0xA) ? '0' : ('a'-0xA);
+
+		msg[i+2] = digit;
+	}
+
+	msg[10] = '\0';
+
+	sram_print(msg);
 }
 
 // This sucks, should use a stdout devoptab.
