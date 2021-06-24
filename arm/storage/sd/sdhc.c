@@ -713,8 +713,10 @@ sdhc_transfer_data(struct sdhc_host *hp, struct sdmmc_command *cmd)
         printf("sdhc: CMD52/53 error response flags %#x\n",
             MMC_R1(cmd->c_resp) & 0xff00);
 #endif
-    if (ISSET(cmd->c_flags, SCF_CMD_READ))
+    if (ISSET(cmd->c_flags, SCF_CMD_READ)) {
             ahb_flush_from(hp->pa.wb);
+            dc_invalidaterange(cmd->c_data, cmd->c_datalen);
+    }
 
     if (error != 0)
         cmd->c_error = error;
