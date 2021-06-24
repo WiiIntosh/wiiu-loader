@@ -17,7 +17,7 @@ container-build:
         changes:
             - Dockerfile
 
-master-build:
+loader-build:
     stage: build
     script:
     - sed s/B5XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DEFINITELY_LEGAL}/g -i castify.py
