@@ -10,8 +10,8 @@ STRIP   = $(PREFIX)-strip
 OBJCOPY = $(PREFIX)-objcopy
 
 ASFLAGS   = -marm -fomit-frame-pointer -mbig-endian -fshort-wchar -mcpu=arm926ej-s -march=armv5te -fno-zero-initialized-in-bss
-CFLAGS   = -Os -Wall -fpic $(ASFLAGS)
-LDFLAGS = -n -nostartfiles -EB -L"$(DEVKITARM)/arm-none-eabi/lib"
+CFLAGS   = -Os -Wall -nostartfiles -fpic $(ASFLAGS)
+LDFLAGS = -n -EB -L"$(DEVKITARM)/arm-none-eabi/lib"
 
 all: elfloader.bin
 
