@@ -150,7 +150,7 @@ void SRAM_TEXT gfx_draw_char(gfx_screen_t screen, char c, int x, int y, u32 colo
 	}
 }
 
-void SRAM_TEXT gfx_draw_string(gfx_screen_t screen, char* str, int x, int y, u32 color)
+void SRAM_TEXT gfx_draw_string(gfx_screen_t screen, const char* str, int x, int y, u32 color)
 {
 	if(screen == GFX_ALL) {
 		for(int i = 0; i < GFX_ALL; i++)
