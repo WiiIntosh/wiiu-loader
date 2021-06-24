@@ -152,6 +152,7 @@ static int _isfs_load_keys(isfs_ctx* ctx)
     return 0;
 }
 
+#ifdef ISFS_DEBUG
 void isfs_print_fst(isfs_fst* fst)
 {
     const char dir[4] = "?-d?";
@@ -170,6 +171,7 @@ void isfs_print_fst(isfs_fst* fst)
     printf("%s %02x %04x %04x %08lx (%04x %08lx)     %s\n", buffer,
             fst->attr, fst->uid, fst->gid, fst->size, fst->x1, fst->x3, fst->name);
 }
+#endif
 
 static void _isfs_print_fst(isfs_fst* fst)
 {
