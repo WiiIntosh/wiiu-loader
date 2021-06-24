@@ -469,8 +469,16 @@ int isfs_read(isfs_file* file, void* buffer, size_t size, size_t* bytes_read)
     if(!page_buf) return -3;
 
     while(size) {
-        size_t work = min(8 * PAGE_SIZE, size);
-        u32 pages = ((work + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1)) / PAGE_SIZE;
+        //size_t work = min(8 * PAGE_SIZE, size);
+        //u32 pages = ((work + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1)) / PAGE_SIZE;
+
+        //HACK: we always read from the start of the 8-page cluster, without
+        //taking pos into account. This means for small page counts and large
+        //pos, we end up not writing to page_buf and memcpy'ing uninitialised
+        //memory. I tried to fix this by reading from the correct offset, it
+        //didn't work, so let's just read a whole cluster at a time.
+        //TODO someone could come back over and fix this for tiny performance.
+        const u32 pages = 8;
 
         size_t pos = file->offset % (8 * PAGE_SIZE);
         size_t copy = (8 * PAGE_SIZE) - pos;
