@@ -17,7 +17,7 @@
 
 #include <string.h>
 
-void ppc_hang(void)
+void SRAM_TEXT ppc_hang(void)
 {
     clear32(LT_RESETS_COMPAT, 0x230);
     udelay(100);

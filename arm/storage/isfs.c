@@ -152,6 +152,7 @@ static int _isfs_load_keys(isfs_ctx* ctx)
     return 0;
 }
 
+#ifdef ISFS_DEBUG
 void isfs_print_fst(isfs_fst* fst)
 {
     const char dir[4] = "?-d?";
@@ -170,6 +171,7 @@ void isfs_print_fst(isfs_fst* fst)
     printf("%s %02x %04x %04x %08lx (%04x %08lx)     %s\n", buffer,
             fst->attr, fst->uid, fst->gid, fst->size, fst->x1, fst->x3, fst->name);
 }
+#endif
 
 static void _isfs_print_fst(isfs_fst* fst)
 {
@@ -467,8 +469,16 @@ int isfs_read(isfs_file* file, void* buffer, size_t size, size_t* bytes_read)
     if(!page_buf) return -3;
 
     while(size) {
-        size_t work = min(8 * PAGE_SIZE, size);
-        u32 pages = ((work + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1)) / PAGE_SIZE;
+        //size_t work = min(8 * PAGE_SIZE, size);
+        //u32 pages = ((work + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1)) / PAGE_SIZE;
+
+        //HACK: we always read from the start of the 8-page cluster, without
+        //taking pos into account. This means for small page counts and large
+        //pos, we end up not writing to page_buf and memcpy'ing uninitialised
+        //memory. I tried to fix this by reading from the correct offset, it
+        //didn't work, so let's just read a whole cluster at a time.
+        //TODO someone could come back over and fix this for tiny performance.
+        const u32 pages = 8;
 
         size_t pos = file->offset % (8 * PAGE_SIZE);
         size_t copy = (8 * PAGE_SIZE) - pos;
@@ -621,8 +631,8 @@ static void _isfsdev_fst_to_stat(const isfs_fst* fst, struct stat* st)
     st->st_rdev = st->st_dev;
     st->st_mtime = 0;
 
-    st->st_spare1 = fst->x1;
-    st->st_spare2 = fst->x3;
+    //st->st_spare1 = fst->x1;
+    //st->st_spare2 = fst->x3;
 }
 
 static int _isfsdev_stat_r(struct _reent* r, const char* file, struct stat* st)

@@ -13,9 +13,10 @@ OUTPUT_ARCH(arm)
 EXTERN(_start)
 ENTRY(_start)
 
-__stack_size = 0x80000;
-__irqstack_size = 0x40000;
-__excstack_size = 0x40000;
+__stack_size = 0x8000;
+__sram_stack_size = 0x2000;
+__irqstack_size = 0x1000;
+__excstack_size = 0x1000;
 
 MEMORY {
 	sram0		: ORIGIN = 0xffff0000, LENGTH = 64K /* 0x10000 */
@@ -28,11 +29,25 @@ SECTIONS
 	{
 		*(.init)
 		*(.sram.text)
+
 		*(.sram.data)
+		*(.sram.data2)
+	} >sram0
+
+	.sram.stack :
+	{
 		. = ALIGN(16);
-		/* Fill remaining SRAM with stack */
-		__sram_stack_size = 0x100000000 - ABSOLUTE(.) - 0x10;
 		__sram_stack_lowaddr = .;
+		. = . +__sram_stack_size;
+		. = ALIGN(16);
+		__irqstack_end = .;
+		. = . +__irqstack_size;
+		. = ALIGN(16);
+		__irqstack_addr = .;
+		__excstack_end = .;
+		. = . +__excstack_size;
+		. = ALIGN(16);
+		__excstack_addr = .;
 		. = ALIGN(4);
 	} >sram0
 
@@ -83,14 +98,6 @@ SECTIONS
 		. = . +__stack_size;
 		. = ALIGN(16);
 		__stack_addr = .;
-		__irqstack_end = .;
-		. = . +__irqstack_size;
-		. = ALIGN(16);
-		__irqstack_addr = .;
-		__excstack_end = .;
-		. = . +__excstack_size;
-		. = ALIGN(16);
-		__excstack_addr = .;
 		. = ALIGN(4);
 	} >mem2
 

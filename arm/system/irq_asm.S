@@ -40,6 +40,8 @@ v_irq:
     pop     {r0-r3, r9, r12, lr}
     subs    pc, lr, #4
 
+.section .sram.text
+
 irq_kill:
     mrs     r1, cpsr
     and     r0, r1, #(0x80|0x40)
@@ -53,4 +55,3 @@ irq_restore:
     orr     r1, r1, r0
     msr     cpsr_c, r1
     bx      lr
-
