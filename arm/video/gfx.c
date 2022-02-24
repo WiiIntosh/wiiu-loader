@@ -176,8 +176,9 @@ void SRAM_TEXT gfx_draw_string(gfx_screen_t screen, const char* str, int x, int 
 }
 
 void SRAM_TEXT sram_print(const char* msg) {
+	gfx_screen_t screen = GFX_DRC;
 	int lines = 0;
-	int width = fbs[GFX_DRC].current_x;
+	int width = fbs[screen].current_x;
 	for (int k = 0; msg[k]; k++) {
 		width += CHAR_SIZE_X;
 		if (msg[k] == '\n') {
@@ -185,13 +186,13 @@ void SRAM_TEXT sram_print(const char* msg) {
 			width = 0;
 		}
 	}
-	if (fbs[GFX_DRC].current_y + lines >= fbs[GFX_DRC].height - 20) {
-		gfx_clear(GFX_DRC, BLACK);
+	if (fbs[screen].current_y + lines >= fbs[screen].height - 20) {
+		gfx_clear(screen, BLACK);
 	}
-	gfx_draw_string(GFX_DRC, msg, fbs[GFX_DRC].current_x, fbs[GFX_DRC].current_y, GREEN);
+	gfx_draw_string(screen, msg, fbs[screen].current_x, fbs[screen].current_y, GREEN);
 
-	fbs[GFX_DRC].current_y += lines;
-	fbs[GFX_DRC].current_x = width;
+	fbs[screen].current_y += lines;
+	fbs[screen].current_x = width;
 }
 
 void SRAM_TEXT sram_print_hex(u32 hex) {
