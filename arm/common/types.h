@@ -40,7 +40,7 @@ typedef volatile s64 vs64;
 
 #define NULL ((void *)0)
 
-#define ALWAYS_INLINE __attribute__((always_inline))
+#define ALWAYS_INLINE __attribute__((always_inline)) inline
 //gcc will sometimes sneak in memset calls which we 100% don't want in sram
 #define SRAM_TEXT __attribute__((section(".sram.text"))) __attribute__((optimize("no-tree-loop-distribute-patterns")))
 #define SRAM_DATA __attribute__((section(".sram.data")))
