@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 #include "video/gfx.h"
+#include "system/abif.h"
 #include "system/ppc.h"
 #include "system/exception.h"
 #include "system/memory.h"
@@ -36,6 +37,7 @@
 #include "common/utils.h"
 
 void NORETURN _main(void* base) {
+	abif_gpu_setup();
 	gfx_clear(GFX_ALL, BLACK);
 	printf("Hello World!\n");
 
