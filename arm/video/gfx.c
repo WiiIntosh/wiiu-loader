@@ -166,7 +166,7 @@ void SRAM_TEXT gfx_draw_string(gfx_screen_t screen, const char* str, int x, int 
 
 			dx += 8;
 
-			if(str[k] == '\n')
+			if(x + dx >= fbs[screen].width || str[k] == '\n')
 			{
 				dx = 0;
 				dy -= 8;
@@ -181,7 +181,7 @@ void SRAM_TEXT sram_print(const char* msg) {
 	int width = fbs[screen].current_x;
 	for (int k = 0; msg[k]; k++) {
 		width += CHAR_SIZE_X;
-		if (msg[k] == '\n') {
+		if (width >= fbs[screen].width || msg[k] == '\n') {
 			lines += 10;
 			width = 0;
 		}
