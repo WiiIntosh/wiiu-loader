@@ -19,10 +19,10 @@
 #include "isfs.h"
 #include "crypto/crypto.h"
 
-#include "sd/fatfs/ff.h"
-#include "nand.h"
-#include "sd/sdmmc.h"
-#include "sd/sdcard.h"
+#include "storage/sd/fatfs/ff.h"
+#include "storage/nand/nand.h"
+#include "storage/sd/sdmmc.h"
+#include "storage/sd/sdcard.h"
 
 //#define ISFS_DEBUG
 

@@ -16,7 +16,7 @@
 #include "latte.h"
 #include "video/gfx.h"
 #include "common/utils.h"
-#include "storage/nand.h"
+#include "storage/nand/nand.h"
 #include "storage/sd/sdcard.h"
 
 static u32 _alarm_frequency = 0;

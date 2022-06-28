@@ -20,9 +20,11 @@ export TARGET		:=	$(shell basename $(CURDIR))-arm
 export BUILD		?=	build
 
 R_SOURCES			:=
-SOURCES				:=	arm arm/video arm/storage arm/storage/sd \
-						arm/storage/sd/fatfs \
+SOURCES				:=	arm arm/video arm/storage \
+						arm/storage/sd arm/storage/sd/fatfs \
+						arm/storage/nand arm/storage/nand/isfs \
 						arm/crypto arm/common arm/system
+
 
 R_INCLUDES			:=
 INCLUDES 			:=	arm data

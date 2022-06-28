@@ -31,7 +31,7 @@
 #include "system/irq.h"
 #include "system/smc.h"
 #include "system/latte.h"
-#include "storage/isfs.h"
+#include "storage/nand/isfs/isfs.h"
 #include "common/utils.h"
 #include "storage/sd/sdcard.h"
 #include "storage/sd/fatfs/elm.h"

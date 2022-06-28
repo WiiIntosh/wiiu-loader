@@ -29,7 +29,7 @@
 #include "system/irq.h"
 #include "storage/sd/sdcard.h"
 #include "storage/sd/fatfs/elm.h"
-#include "storage/isfs.h"
+#include "storage/nand/isfs/isfs.h"
 #include "crypto/crypto.h"
 #include "application.h"
 #include "system/smc.h"
