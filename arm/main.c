@@ -37,6 +37,7 @@
 #include "common/utils.h"
 
 void NORETURN _main(void* base) {
+	//Set up framebuffer/logging
 	abif_gpu_setup();
 	gfx_clear(GFX_ALL, BLACK);
 	printf("Hello World!\n");

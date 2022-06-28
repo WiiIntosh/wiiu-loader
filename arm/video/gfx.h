@@ -13,8 +13,8 @@
 
 #include "common/types.h"
 
-#define RED    (0xFF0000FF)
-#define GREEN  (0x00FF00FF)
+#define RED    (0xFFFF0000)
+#define GREEN  (0xFF00FF00)
 #define BLACK  (0x00000000)
 #define WHITE  (0xFFFFFFFF)
 

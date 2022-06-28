@@ -35,4 +35,5 @@ void abif_gpu_write32(u16 offs, u32 data) {
 void abif_gpu_setup(void) {
     // For now, we only want to flip the endian to what Linux wants
     abif_gpu_write32(D1GRPH + DGRPH_SWAP_CNTL, DGRPH_ENDIAN_SWAP_32);
+    abif_gpu_write32(D2GRPH + DGRPH_SWAP_CNTL, DGRPH_ENDIAN_SWAP_32);
 }
