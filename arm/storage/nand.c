@@ -120,9 +120,9 @@ int nand_reset(u32 bank) {
 
     write32(NAND_CONF, 0xcb3e0e7f);
 
-    write32(NAND_UNK2, 0);
-    while((s32)read32(NAND_UNK2) < 0);
-    write32(NAND_UNK2, 0);
+    write32(NAND_BANK_CTRL, 0);
+    while((s32)read32(NAND_BANK_CTRL) < 0);
+    write32(NAND_BANK_CTRL, 0);
 
     u32 base = NAND_UNK3;
     do
