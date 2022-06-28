@@ -18,6 +18,7 @@
 #include <sys/errno.h>
 
 #include "crypto/sha.h"
+#include "crypto/aes.h"
 #include "crypto/crypto.h"
 #include "system/smc.h"
 
