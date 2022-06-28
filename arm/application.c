@@ -31,6 +31,7 @@
 #include "system/irq.h"
 #include "system/smc.h"
 #include "system/latte.h"
+#include "storage/nand/nand.h"
 #include "storage/nand/isfs/isfs.h"
 #include "common/utils.h"
 #include "storage/sd/sdcard.h"
@@ -214,6 +215,7 @@ void NORETURN app_run() {
 	sdcard_exit();
 	irq_disable(IRQ_SD0);
 	isfs_fini();
+	nand_deinitialize();
 	irq_shutdown();
 	printf("[ OK ] Unmounted filesystems and removed interrupts.\n");
 	mem_shutdown();

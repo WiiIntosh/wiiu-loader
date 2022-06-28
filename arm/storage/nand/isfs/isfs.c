@@ -40,13 +40,13 @@ isfs_ctx isfs[4] = {
     {
         .volume = 0,
         .name = "slc",
-        .bank = NAND_BANK_SLC,
+        .bank = BANK_SLC,
     },
     [1]
     {
         .volume = 1,
         .name = "slccmpt",
-        .bank = NAND_BANK_SLCCMPT,
+        .bank = BANK_SLCCMPT,
     },
     [2]
     {
@@ -75,8 +75,6 @@ static isfs_ctx* _isfs_get_volume(int volume)
     return NULL;
 }
 
-static u8 ecc_buf[ECC_BUFFER_ALLOC] ALIGNED(128);
-
 static int _isfs_read_pages(isfs_ctx* ctx, void* buffer, u32 start, u32 pages)
 {
     if(ctx->bank & 0x80000000) {
@@ -92,19 +90,17 @@ static int _isfs_read_pages(isfs_ctx* ctx, void* buffer, u32 start, u32 pages)
         u32 lba = LD_DWORD(&part4[0x8]);
 
         u8 index = ctx->bank & 0xFF;
-        u32 base = lba + (index * make_sector(NAND_MAX_PAGE));
+        u32 base = lba + (index * make_sector(PAGE_COUNT));
 
         if(sdcard_read(base + make_sector(start), make_sector(pages), buffer))
             return -1;
     } else {
-        nand_initialize(ctx->bank);
+        nand_enable_banks(ctx->bank);
 
         u32 i, j;
         for(i = start, j = 0; i < start + pages; i++, j += PAGE_SIZE)
         {
-            nand_read_page(i, buffer + j, ecc_buf);
-            nand_wait();
-            nand_correct(i, buffer + j, ecc_buf);
+            nand_read_page(i, buffer + j, NULL);
         }
     }
 
@@ -311,7 +307,7 @@ static int _isfs_load_super(isfs_ctx* ctx)
     int res = 0;
 
     const u32 start = 0x3F800;
-    const u32 end = NAND_MAX_PAGE;
+    const u32 end = PAGE_COUNT;
     const u32 size = 0x80;
 
     struct {

@@ -1,6 +1,7 @@
 /*
  *  minute - a port of the "mini" IOS replacement for the Wii U.
  *
+ *  Copyright (C) 2021          rw-r-r-0644
  *  Copyright (C) 2016          SALT
  *  Copyright (C) 2016          Daz Jones <daz@dazzozo.com>
  *
@@ -16,34 +17,53 @@
 
 #include "common/types.h"
 
-#define PAGE_SIZE       2048
-#define PAGE_SPARE_SIZE     64
-#define ECC_BUFFER_SIZE     (PAGE_SPARE_SIZE+16)
-#define ECC_BUFFER_ALLOC    (PAGE_SPARE_SIZE+32)
-#define BLOCK_SIZE      64
-#define NAND_MAX_PAGE       0x40000
+#define NAND_WRITE_ENABLED  0
 
-#define NAND_BANK_SLCCMPT 0x00000001
-#define NAND_BANK_SLC 0x00000002
+#define NAND_DATA_ALIGN     128
 
-#define NAND_CMD_EXEC (1<<31)
+/* nand structure definitions */
+#define PAGE_SIZE           0x800
+#define PAGE_COUNT          0x40000
 
+#define SPARE_SIZE          0x40
+
+#define CLUSTER_PAGES       8
+#define CLUSTER_SIZE        (PAGE_SIZE * CLUSTER_PAGES)
+#define CLUSTER_COUNT       (PAGE_COUNT / CLUSTER_PAGES)
+
+#define BLOCK_CLUSTERS      8
+#define BLOCK_PAGES         0x40
+#define BLOCK_SIZE          (CLUSTER_SIZE * BLOCK_CLUSTERS)
+#define BLOCK_COUNT         (CLUSTER_COUNT / BLOCK_CLUSTERS)
+
+/* nand banks */
+#define BANK_SLCCMPT        1
+#define BANK_SLC            2
+
+/* initialize nand */
+void nand_initialize(void);
+
+/* shutdown nand interface */
+void nand_deinitialize(void);
+
+/* read nand chip id */
+int nand_read_chipid(void *chipid);
+
+/* read page and spare */
+int nand_read_page(u32 pageno, void *data, void *spare);
+
+#if NAND_WRITE_ENABLED
+/* write page and spare */
+int nand_write_page(u32 pageno, void *data, void *spare);
+
+/* erase a block of pages */
+int nand_erase_block(u32 blockno);
+#endif
+
+/* set enabled nand banks */
+void nand_enable_banks(u32 bank);
+
+/* nand irq handler */
 void nand_irq(void);
-
-void nand_send_command(u32 command, u32 bitmask, u32 flags, u32 num_bytes);
-int nand_reset(u32 bank);
-void nand_get_id(u8 *);
-void nand_get_status(u8 *);
-void nand_read_page(u32 pageno, void *data, void *ecc);
-void nand_write_page(u32 pageno, void *data, void *ecc);
-void nand_erase_block(u32 pageno);
-void nand_wait(void);
-
-#define NAND_ECC_OK 0
-#define NAND_ECC_CORRECTED 1
-#define NAND_ECC_UNCORRECTABLE -1
-
-int nand_correct(u32 pageno, void *data, void *ecc);
-void nand_initialize(u32 bank);
 
 #endif
