@@ -17,8 +17,8 @@
 #include <string.h>
 #include <sys/errno.h>
 
-#include "sha.h"
-#include "crypto.h"
+#include "crypto/sha.h"
+#include "crypto/crypto.h"
 #include "system/smc.h"
 
 #define ANCAST_MAGIC (0xEFA282D9l)

@@ -16,7 +16,6 @@
 #include "latte.h"
 #include "video/gfx.h"
 #include "common/utils.h"
-#include "storage/crypto.h"
 #include "storage/nand.h"
 #include "storage/sd/sdcard.h"
 

@@ -16,7 +16,7 @@
 #include "nand.h"
 #include "common/utils.h"
 #include "system/memory.h"
-#include "crypto.h"
+#include "crypto/crypto.h"
 #include "system/irq.h"
 #include "video/gfx.h"
 #include "common/types.h"

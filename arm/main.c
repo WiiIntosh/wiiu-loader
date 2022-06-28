@@ -30,7 +30,7 @@
 #include "storage/sd/sdcard.h"
 #include "storage/sd/fatfs/elm.h"
 #include "storage/isfs.h"
-#include "storage/crypto.h"
+#include "crypto/crypto.h"
 #include "application.h"
 #include "system/smc.h"
 #include "system/latte.h"

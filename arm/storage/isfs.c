@@ -17,7 +17,7 @@
 #include <malloc.h>
 
 #include "isfs.h"
-#include "crypto.h"
+#include "crypto/crypto.h"
 
 #include "sd/fatfs/ff.h"
 #include "nand.h"
