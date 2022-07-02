@@ -91,7 +91,7 @@ int ppc_load_file(const char *path, u32* entry)
     }
 
     if (_check_physaddr(elfhdr.e_entry) < 0) {
-        printf("ELF: invalid entry point! 0x%08lX\n", elfhdr.e_entry);
+        printf("ELF: invalid entry point! 0x%08X\n", elfhdr.e_entry);
         return -102;
     }
 
@@ -119,17 +119,17 @@ int ppc_load_file(const char *path, u32* entry)
 
     while (count--) {
         if (phdr->p_type != PT_LOAD) {
-            printf("ELF: skipping PHDR of type %ld\n", phdr->p_type);
+            printf("ELF: skipping PHDR of type %d\n", phdr->p_type);
         } else {
             if (_check_physrange(phdr->p_paddr, phdr->p_memsz) < 0) {
-                printf("ELF: PHDR out of bounds [0x%08lX...0x%08lX]\n",
+                printf("ELF: PHDR out of bounds [0x%08X...0x%08X]\n",
                                 phdr->p_paddr, phdr->p_paddr + phdr->p_memsz);
                 return -106;
             }
 
             void *dst = (void *) _translate_physaddr(phdr->p_paddr);
 
-            printf("ELF: LOAD 0x%lX @0x%08lX [0x%lX]\n", phdr->p_offset, phdr->p_paddr, phdr->p_filesz);
+            printf("ELF: LOAD 0x%X @0x%08X [0x%X]\n", phdr->p_offset, phdr->p_paddr, phdr->p_filesz);
             if(phdr->p_filesz != 0) {
                 res = fseek(file, phdr->p_offset, SEEK_SET);
                 if (res) return -res;
@@ -163,7 +163,7 @@ int ppc_load_mem(const u8 *addr, u32 len, u32* entry)
     }
 
     if (_check_physaddr(ehdr->e_entry) < 0) {
-        printf("ELF: invalid entry point! 0x%08lX\n", ehdr->e_entry);
+        printf("ELF: invalid entry point! 0x%08X\n", ehdr->e_entry);
         return -102;
     }
 
@@ -191,15 +191,15 @@ int ppc_load_mem(const u8 *addr, u32 len, u32* entry)
 
     while (count--) {
         if (phdr->p_type != PT_LOAD) {
-            printf("ELF: skipping PHDR of type %ld\n", phdr->p_type);
+            printf("ELF: skipping PHDR of type %u\n", phdr->p_type);
         } else {
             if (_check_physrange(phdr->p_paddr, phdr->p_memsz) < 0) {
-                printf("ELF: PHDR out of bounds [0x%08lX...0x%08lX]\n",
+                printf("ELF: PHDR out of bounds [0x%08X...0x%08X]\n",
                                 phdr->p_paddr, phdr->p_paddr + phdr->p_memsz);
                 return -106;
             }
 
-            printf("ELF: LOAD 0x%lX @0x%08lX [0x%lX]\n", phdr->p_offset, phdr->p_paddr, phdr->p_filesz);
+            printf("ELF: LOAD 0x%X @0x%08X [0x%X]\n", phdr->p_offset, phdr->p_paddr, phdr->p_filesz);
 
             void *dst = (void *) _translate_physaddr(phdr->p_paddr);
             memcpy(dst, &addr[phdr->p_offset], phdr->p_filesz);
