@@ -12,6 +12,7 @@ __pycache__/
 .metadata
 .project
 .cproject
+.idea/
 *.tmp
 *.bak
 *.swp
