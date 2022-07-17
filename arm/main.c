@@ -29,8 +29,9 @@
 #include "system/irq.h"
 #include "storage/sd/sdcard.h"
 #include "storage/sd/fatfs/elm.h"
-#include "storage/isfs.h"
-#include "storage/crypto.h"
+#include "storage/nand/nand.h"
+#include "storage/nand/isfs/isfs.h"
+#include "crypto/crypto.h"
 #include "application.h"
 #include "system/smc.h"
 #include "system/latte.h"
@@ -54,6 +55,9 @@ void NORETURN _main(void* base) {
 	srand(read32(LT_TIMER));
 	crypto_initialize();
 	printf("[ OK ] Setup Crypto\n");
+
+	nand_initialize();
+	printf("[ OK ] Setup NAND\n");
 
 	sdcard_init();
 	printf("[ OK ] Setup SD Card\n");

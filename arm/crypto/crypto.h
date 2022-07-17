@@ -125,7 +125,7 @@ typedef struct
         char ascii_tag[12];
         u32 jtag_status;
     };
-} __attribute__((packed)) otp_t;
+} __attribute__((packed, aligned(4))) otp_t;
 
 _Static_assert(sizeof(otp_t) == 0x400, "OTP size must be 0x400!");
 
@@ -230,10 +230,5 @@ void crypto_read_otp();
 
 void crypto_initialize();
 
-void aes_reset(void);
-void aes_set_iv(u8 *iv);
-void aes_empty_iv();
-void aes_set_key(u8 *key);
-void aes_decrypt(u8 *src, u8 *dst, u32 blocks, u8 keep_iv);
 
 #endif
