@@ -46,7 +46,7 @@ CXXFLAGS		:=	$(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS			:=	-g $(ARCH)
 LDFLAGS			 =	-nostartfiles -g --specs=../stub.specs $(ARCH) -Wl,--gc-sections,-Map,$(TARGET).map \
-					-L$(DEVKITARM)/lib/gcc/arm-none-eabi/5.3.0/be -L$(DEVKITARM)/arm-none-eabi/lib/be
+					-L$(DEVKITARM)/lib/gcc/arm-none-eabi/$(shell $(CC) -dumpversion)/be -L$(DEVKITARM)/arm-none-eabi/lib/be
 
 LIBS			:=
 
