@@ -62,6 +62,10 @@ void NORETURN _main(void* base) {
 	sdcard_init();
 	printf("[ OK ] Setup SD Card\n");
 
+	// Quiesce DSP
+	clear32(LT_RESETS_COMPAT, 0x400000);
+	printf("[ OK ] Paused DSP\n");
+
 	int res = ELM_Mount();
 	if (res) {
 		char errorstr[] = "Couldn't mount SD card! See Gamepad for details.";
