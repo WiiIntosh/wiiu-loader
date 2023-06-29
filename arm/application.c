@@ -57,6 +57,7 @@ struct ProfileConfig {
 	char name[64];
 	char humanName[64];
 	char kernelPath[128];
+    char initrdPath[128];
 	char kernelCmd[256];
 };
 static struct ProfileConfig profiles[NUM_PROFILES] = { false };
@@ -74,6 +75,10 @@ struct wiiu_ppc_data {
 	unsigned int initrd_sz;
 };
 static struct wiiu_ppc_data* ppc_data = (void*)0x89200000;
+
+/* Linux 4.19 needs initrd in LOWMEM. thus the top of mem1 here.
+ * TODO check this doesn't overlap kernel and leaves room for bootwrapper heap */
+static const uint32_t initrd_top = 0x01C00000;
 
 #define LT_IPC_ARMCTRL_COMPAT_X1 0x4
 #define LT_IPC_ARMCTRL_COMPAT_Y1 0x1
@@ -150,7 +155,9 @@ static int config_handler(void* user, const char* section, const char* name, con
 			strlcpy(profiles[ndx].kernelPath, value, sizeof(profiles[ndx].kernelPath));
 		} else if (strcmp("cmdline", name) == 0) {
 			strlcpy(profiles[ndx].kernelCmd, value, sizeof(profiles[ndx].kernelCmd));
-		}
+		} else if (strcmp("initrd", name) == 0) {
+            strlcpy(profiles[ndx].initrdPath, value, sizeof(profiles[ndx].initrdPath));
+        }
 	}
 	return 1;
 }
@@ -187,6 +194,24 @@ void NORETURN app_run() {
 			strlcpy(ppc_data->cmdline, profiles[profileNdx].kernelCmd, sizeof(ppc_data->cmdline));
 			write32((unsigned int)&ppc_data->magic, WIIU_LOADER_MAGIC);
 		}
+
+    /*  Load initrd */
+        if (strlen(profiles[profileNdx].initrdPath) > 0) {
+            FILE* initrd_file = fopen(profiles[profileNdx].initrdPath, "rb");
+            if (initrd_file) {
+                fseek(initrd_file, 0L, SEEK_END);
+                ppc_data->initrd_sz = ftell(initrd_file);
+                fseek(initrd_file, 0L, SEEK_SET);
+                ppc_data->initrd = (void*)((initrd_top - ppc_data->initrd_sz) & 0xFFFF0000);
+
+                printf("[INFO] Loading initrd into 0x%08X, size 0x%X...\n", (unsigned int)ppc_data->initrd, ppc_data->initrd_sz);
+                fread(ppc_data->initrd, ppc_data->initrd_sz, 1, initrd_file);
+                fclose(initrd_file);
+                write32((unsigned int)&ppc_data->magic, WIIU_LOADER_MAGIC);
+            }
+        }
+
+        dc_flushall();
 	}
 
 /*	If that failed, use the default kernel locations */
