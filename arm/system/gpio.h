@@ -53,5 +53,7 @@ enum {
 #define GP_ARM_DEFAULT_ON (GP_DEFAULT_ON & GP_OWNER_ARM)
 #define GP_PPC_DEFAULT_ON (GP_DEFAULT_ON & GP_OWNER_PPC)
 
+#define GP_DEBUG_SERIAL_MASK 0xBF0000 // bit1 is input
+
 #endif
 

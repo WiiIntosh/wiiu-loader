@@ -10,6 +10,7 @@
 
 #include "gfx.h"
 #include "lw-logo.h"
+#include "system/serial.h"
 #include <stdio.h>
 
 extern const u8 msx_font[];
@@ -240,6 +241,10 @@ int printf(const char* fmt, ...)
 		//current_x += strlen(last_line);
 		fbs[GFX_DRC].current_y += lines;
 	//}
+
+    for (int k = 0; str[k]; k++) {
+        serial_send(str[k]);
+    }
 
 	return 0;
 }
