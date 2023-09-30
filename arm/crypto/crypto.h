@@ -21,7 +21,10 @@ typedef struct
 {
     // Bank 0 (Wii)
     struct {
-        u8 wii_boot1_hash[20];
+        union {
+            u8 wii_boot1_hash[20];
+            u32 otpstore_magic[4];
+        };
         u8 wii_common_key[16];
         u32 wii_ng_id;
         union {
