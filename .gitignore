@@ -24,4 +24,5 @@ local.properties
 # Project-specific
 build/
 fw.img
+ios.img
 compile.sh
