@@ -59,6 +59,7 @@ void gpio_debug_serial_send(u8 val)
     set32(LT_GPIO_DIR, GP_DEBUG_SERIAL_MASK); // Direction = Out
 
     mask32(LT_GPIO_OUT, GP_DEBUG_SERIAL_MASK, (val << GP_DEBUG_SHIFT));
+    set32(LT_GPIO_OWNER, GP_DEBUG_MASK); // give back to ppc when done
 }
 
 u8 gpio_debug_serial_read()
@@ -67,7 +68,9 @@ u8 gpio_debug_serial_read()
     set32(LT_GPIO_ENABLE, GP_DEBUG_MASK); // Enable
     set32(LT_GPIO_DIR, GP_DEBUG_SERIAL_MASK); // Direction = Out
 
-    return (read32(LT_GPIO_IN) >> (GP_DEBUG_SHIFT+6)) & 1;
+    u8 val = (read32(LT_GPIO_IN) >> (GP_DEBUG_SHIFT+6)) & 1;
+    set32(LT_GPIO_OWNER, GP_DEBUG_MASK); // give back to ppc when done
+    return val;
 }
 
 void serial_force_terminate()
