@@ -197,6 +197,7 @@
 #define LT_60XE_CFG                   (LT_REG_BASE + 0x640)
 #define LT_UNK660                     (LT_REG_BASE + 0x660)
 #define LT_UNK640                     (LT_REG_BASE + 0x640)
+#define LT_GPU_ENDIANNESS             (LT_REG_BASE + 0x64A)
 #define LT_DCCMPT                     (LT_REG_BASE + 0x708)
 
 /*

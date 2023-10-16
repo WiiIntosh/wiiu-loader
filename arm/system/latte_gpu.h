@@ -56,14 +56,31 @@
         #define DGRPH_ENDIAN_SWAP_32 0x2
         #define DGRPH_ENDIAN_SWAP_64 0x3
     #define DGRPH_RED_CROSSBAR 0x30
-        #define DGRPH_RED_CROSSBAR_RED 0x00
+        #define DGRPH_RED_CROSSBAR_RED   0x00
+        #define DGRPH_RED_CROSSBAR_GREEN 0x10
+        #define DGRPH_RED_CROSSBAR_BLUE  0x20
+        #define DGRPH_RED_CROSSBAR_ALPHA 0x30
     #define DGRPH_GREEN_CROSSBAR 0xC0
         #define DGRPH_GREEN_CROSSBAR_GREEN 0x00
+        #define DGRPH_GREEN_CROSSBAR_BLUE  0x40
+        #define DGRPH_GREEN_CROSSBAR_ALPHA 0x80
+        #define DGRPH_GREEN_CROSSBAR_RED   0xC0
     #define DGRPH_BLUE_CROSSBAR 0x300
-        #define DGRPH_BLUE_CROSSBAR_BLUE 0x000
+        #define DGRPH_BLUE_CROSSBAR_BLUE  0x000
+        #define DGRPH_BLUE_CROSSBAR_ALPHA 0x100
+        #define DGRPH_BLUE_CROSSBAR_RED   0x200
+        #define DGRPH_BLUE_CROSSBAR_GREEN 0x300
     #define DGRPH_ALPHA_CROSSBAR 0xC00
         #define DGRPH_ALPHA_CROSSBAR_ALPHA 0x000
-    // todo: other values for crossbars
+        #define DGRPH_ALPHA_CROSSBAR_RED   0x400
+        #define DGRPH_ALPHA_CROSSBAR_GREEN 0x800
+        #define DGRPH_ALPHA_CROSSBAR_BLUE  0xC00
+
+#define DGRPH_CROSSBAR(r, g, b, a) ( \
+DGRPH_RED_CROSSBAR_##r   |           \
+DGRPH_GREEN_CROSSBAR_##g |           \
+DGRPH_BLUE_CROSSBAR_##b  |           \
+DGRPH_ALPHA_CROSSBAR_##a )
 
 #define DGRPH_PRIMARY_SURFACE_ADDRESS 0x0010
     #define DGRPH_PRIMARY_DFQ_ENABLE 0x1

@@ -33,7 +33,20 @@ void abif_gpu_write32(u16 offs, u32 data) {
 }
 
 void abif_gpu_setup(void) {
-    // For now, we only want to flip the endian to what Linux wants
-    abif_gpu_write32(D1GRPH + DGRPH_SWAP_CNTL, DGRPH_ENDIAN_SWAP_32);
-    abif_gpu_write32(D2GRPH + DGRPH_SWAP_CNTL, DGRPH_ENDIAN_SWAP_32);
+    // Try and set up a framebuffer how Linux likes it
+    abif_gpu_write32(D1GRPH + DGRPH_CONTROL, DGRPH_DEPTH_32BPP | DGRPH_FORMAT_32BPP_ARGB8888 | DGRPH_ARRAY_LINEAR_ALIGNED);
+    abif_gpu_write32(D2GRPH + DGRPH_CONTROL, DGRPH_DEPTH_32BPP | DGRPH_FORMAT_32BPP_ARGB8888 | DGRPH_ARRAY_LINEAR_ALIGNED);
+
+    // Try to account for de_Fuse weirdness
+    uint32_t crossbar;
+    if ((read16(LT_GPU_ENDIANNESS) & 3) != 2) {
+        // de_Fuse goes here
+        crossbar = DGRPH_CROSSBAR(RED, GREEN, ALPHA, BLUE); // this is wrong but I can't work out wtf Linux is doing
+    } else {
+        // presumably Cafe warmboot ends up here
+        crossbar = DGRPH_CROSSBAR(ALPHA, BLUE, GREEN, RED);
+    }
+
+    abif_gpu_write32(D1GRPH + DGRPH_SWAP_CNTL, crossbar);
+    abif_gpu_write32(D2GRPH + DGRPH_SWAP_CNTL, crossbar);
 }
