@@ -71,10 +71,7 @@ struct wiiu_ppc_data {
 	unsigned int initrd_sz;
 };
 static struct wiiu_ppc_data *ppc_data = (void *)0x89200000;
-
-/* Linux 4.19 needs initrd in LOWMEM. thus the top of mem1 here.
- * TODO check this doesn't overlap kernel and leaves room for bootwrapper heap */
-static const uint32_t initrd_top = 0x01C00000;
+extern char __heap_end__; // Start of usable MEM2 scratch
 
 #define LT_IPC_ARMCTRL_COMPAT_X1 0x4
 #define LT_IPC_ARMCTRL_COMPAT_Y1 0x1
@@ -162,6 +159,8 @@ static int config_handler(void *user, const char *section, const char *name, con
 void NORETURN app_run() {
 	int res;
 	bool kernel_loaded = false;
+	/* Write data for Linux kernel (initrd etc.) after the end of our own heap. */
+	void *mem2_offset = &__heap_end__;
 
 	/* Clear out the PowerPC comms area */
 	memset(ppc_data, 0, sizeof(*ppc_data));
@@ -201,7 +200,10 @@ void NORETURN app_run() {
 				fseek(initrd_file, 0L, SEEK_END);
 				ppc_data->initrd_sz = ftell(initrd_file);
 				fseek(initrd_file, 0L, SEEK_SET);
-				ppc_data->initrd = (void *)((initrd_top - ppc_data->initrd_sz) & 0xFFFF0000);
+
+				mem2_offset = PTR_ALIGN_UP(mem2_offset, 0x10000);
+				ppc_data->initrd = mem2_offset;
+				mem2_offset += ppc_data->initrd_sz;
 
 				printf("[INFO] Loading initrd into 0x%08X, size 0x%X...\n",
 				       (unsigned int)ppc_data->initrd, ppc_data->initrd_sz);
@@ -212,6 +214,10 @@ void NORETURN app_run() {
 		}
 
 		dc_flushall();
+	}
+
+	if (mem2_offset >= (void *)0x30000000) {
+		printf("[WARN] Overflowed kernel lowmem! Initrd may not work.");
 	}
 
 	/* If that failed, use the default kernel locations */
