@@ -7,3 +7,5 @@ RUN apt-get update -y && apt-get install --no-install-recommends -y \
 
 WORKDIR /app
 CMD make -j$(nproc)
+
+# number of wasted CI runs: 1
