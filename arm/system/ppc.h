@@ -16,4 +16,3 @@ void ppc_prepare(void);
 void ppc_jump(u32 entry);
 
 #endif
-
