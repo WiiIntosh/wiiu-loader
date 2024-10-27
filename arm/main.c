@@ -20,30 +20,30 @@
  *	see file COPYING or http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
  */
 
-#include <stdlib.h>
-#include "video/gfx.h"
-#include "system/abif.h"
-#include "system/ppc.h"
-#include "system/exception.h"
-#include "system/memory.h"
-#include "system/irq.h"
-#include "storage/sd/sdcard.h"
-#include "storage/sd/fatfs/elm.h"
-#include "storage/nand/nand.h"
-#include "storage/nand/isfs/isfs.h"
-#include "crypto/crypto.h"
 #include "application.h"
-#include "system/smc.h"
-#include "system/latte.h"
 #include "common/utils.h"
+#include "crypto/crypto.h"
+#include "storage/nand/isfs/isfs.h"
+#include "storage/nand/nand.h"
+#include "storage/sd/fatfs/elm.h"
+#include "storage/sd/sdcard.h"
+#include "system/abif.h"
+#include "system/exception.h"
+#include "system/irq.h"
+#include "system/latte.h"
+#include "system/memory.h"
+#include "system/ppc.h"
+#include "system/smc.h"
+#include "video/gfx.h"
+#include <stdlib.h>
 
-void NORETURN _main(void* base) {
-	//Set up framebuffer/logging
+void NORETURN _main(void *base) {
+	// Set up framebuffer/logging
 	abif_gpu_setup();
 	gfx_clear(GFX_ALL, BLACK);
 	printf("Hello World!\n");
 
-	//Initialize everything
+	// Initialize everything
 	exception_initialize();
 	printf("[ OK ] Setup Exceptions\n");
 	mem_initialize();
@@ -69,7 +69,7 @@ void NORETURN _main(void* base) {
 	int res = ELM_Mount();
 	if (res) {
 		char errorstr[] = "Couldn't mount SD card! See Gamepad for details.";
-		gfx_draw_string(GFX_TV, errorstr, (1280 - sizeof(errorstr)*8) / 2, 500, WHITE);
+		gfx_draw_string(GFX_TV, errorstr, (1280 - sizeof(errorstr) * 8) / 2, 500, WHITE);
 		printf("[FATL] SD Card mount error: %d\n", res);
 		panic(0);
 	}
@@ -86,7 +86,7 @@ void NORETURN _main(void* base) {
 	printf("--------------------------\n");
 	printf("          Ready!          \n");
 	printf("--------------------------\n");
-	//We're good to go!
+	// We're good to go!
 
 	app_run();
 }
