@@ -33,6 +33,11 @@ void ppc_reset(void)
     mask32(LT_60XE_CFG, 0x1C0000, 0x20000);
     set32(LT_60XE_CFG, 0xC000);
 
+    //enable data streaming
+    set32(LT_60XE_CFG, 0x1000);
+    set32(LT_60XE_CFG, 0x1008);
+    clear32(LT_60XE_CFG, 0x1000);
+
     set32(LT_RESETS_COMPAT, 0x200);
     clear32(LT_COMPAT_MEMCTRL_STATE, 0x20);
 
