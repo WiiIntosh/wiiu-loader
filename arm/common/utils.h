@@ -12,163 +12,129 @@
 
 #include "types.h"
 
-static inline ALWAYS_INLINE u32 read32(u32 addr)
-{
-    u32 data;
-    __asm__ volatile ("ldr\t%0, [%1]" : "=l" (data) : "l" (addr));
-    return data;
+static inline ALWAYS_INLINE u32 read32(u32 addr) {
+	u32 data;
+	__asm__ volatile("ldr\t%0, [%1]" : "=l"(data) : "l"(addr));
+	return data;
 }
 
-static inline ALWAYS_INLINE void write32(u32 addr, u32 data)
-{
-    __asm__ volatile ("str\t%0, [%1]" : : "l" (data), "l" (addr));
+static inline ALWAYS_INLINE void write32(u32 addr, u32 data) {
+	__asm__ volatile("str\t%0, [%1]" : : "l"(data), "l"(addr));
 }
 
-static inline ALWAYS_INLINE u32 set32(u32 addr, u32 set)
-{
-    u32 data;
-    __asm__ volatile (
-        "ldr\t%0, [%1]\n"
-        "\torr\t%0, %2\n"
-        "\tstr\t%0, [%1]"
-        : "=&l" (data)
-        : "l" (addr), "l" (set)
-    );
-    return data;
+static inline ALWAYS_INLINE u32 set32(u32 addr, u32 set) {
+	u32 data;
+	__asm__ volatile("ldr\t%0, [%1]\n"
+	                 "\torr\t%0, %2\n"
+	                 "\tstr\t%0, [%1]"
+	                 : "=&l"(data)
+	                 : "l"(addr), "l"(set));
+	return data;
 }
 
-static inline ALWAYS_INLINE u32 clear32(u32 addr, u32 clear)
-{
-    u32 data;
-    __asm__ volatile (
-        "ldr\t%0, [%1]\n"
-        "\tbic\t%0, %2\n"
-        "\tstr\t%0, [%1]"
-        : "=&l" (data)
-        : "l" (addr), "l" (clear)
-    );
-    return data;
+static inline ALWAYS_INLINE u32 clear32(u32 addr, u32 clear) {
+	u32 data;
+	__asm__ volatile("ldr\t%0, [%1]\n"
+	                 "\tbic\t%0, %2\n"
+	                 "\tstr\t%0, [%1]"
+	                 : "=&l"(data)
+	                 : "l"(addr), "l"(clear));
+	return data;
 }
 
-
-static inline ALWAYS_INLINE u32 mask32(u32 addr, u32 clear, u32 set)
-{
-    u32 data;
-    __asm__ volatile (
-        "ldr\t%0, [%1]\n"
-        "\tbic\t%0, %3\n"
-        "\torr\t%0, %2\n"
-        "\tstr\t%0, [%1]"
-        : "=&l" (data)
-        : "l" (addr), "l" (set), "l" (clear)
-    );
-    return data;
+static inline ALWAYS_INLINE u32 mask32(u32 addr, u32 clear, u32 set) {
+	u32 data;
+	__asm__ volatile("ldr\t%0, [%1]\n"
+	                 "\tbic\t%0, %3\n"
+	                 "\torr\t%0, %2\n"
+	                 "\tstr\t%0, [%1]"
+	                 : "=&l"(data)
+	                 : "l"(addr), "l"(set), "l"(clear));
+	return data;
 }
 
-static inline ALWAYS_INLINE u16 read16(u32 addr)
-{
-    u32 data;
-    __asm__ volatile ("ldrh\t%0, [%1]" : "=l" (data) : "l" (addr));
-    return data;
+static inline ALWAYS_INLINE u16 read16(u32 addr) {
+	u32 data;
+	__asm__ volatile("ldrh\t%0, [%1]" : "=l"(data) : "l"(addr));
+	return data;
 }
 
-static inline ALWAYS_INLINE void write16(u32 addr, u16 data)
-{
-    __asm__ volatile ("strh\t%0, [%1]" : : "l" (data), "l" (addr));
+static inline ALWAYS_INLINE void write16(u32 addr, u16 data) {
+	__asm__ volatile("strh\t%0, [%1]" : : "l"(data), "l"(addr));
 }
 
-static inline ALWAYS_INLINE u16 set16(u32 addr, u16 set)
-{
-    u16 data;
-    __asm__ volatile (
-        "ldrh\t%0, [%1]\n"
-        "\torr\t%0, %2\n"
-        "\tstrh\t%0, [%1]"
-        : "=&l" (data)
-        : "l" (addr), "l" (set)
+static inline ALWAYS_INLINE u16 set16(u32 addr, u16 set) {
+	u16 data;
+	__asm__ volatile("ldrh\t%0, [%1]\n"
+	                 "\torr\t%0, %2\n"
+	                 "\tstrh\t%0, [%1]"
+	                 : "=&l"(data)
+	                 : "l"(addr), "l"(set)
 
-    );
-    return data;
+	);
+	return data;
 }
 
-static inline ALWAYS_INLINE u16 clear16(u32 addr, u16 clear)
-{
-    u16 data;
-    __asm__ volatile (
-        "ldrh\t%0, [%1]\n"
-        "\tbic\t%0, %2\n"
-        "\tstrh\t%0, [%1]"
-        : "=&l" (data)
-        : "l" (addr), "l" (clear)
-    );
-    return data;
+static inline ALWAYS_INLINE u16 clear16(u32 addr, u16 clear) {
+	u16 data;
+	__asm__ volatile("ldrh\t%0, [%1]\n"
+	                 "\tbic\t%0, %2\n"
+	                 "\tstrh\t%0, [%1]"
+	                 : "=&l"(data)
+	                 : "l"(addr), "l"(clear));
+	return data;
 }
 
-
-static inline ALWAYS_INLINE u16 mask16(u32 addr, u16 clear, u16 set)
-{
-    u16 data;
-    __asm__ volatile (
-        "ldrh\t%0, [%1]\n"
-        "\tbic\t%0, %3\n"
-        "\torr\t%0, %2\n"
-        "\tstrh\t%0, [%1]"
-        : "=&l" (data)
-        : "l" (addr), "l" (set), "l" (clear)
-    );
-    return data;
+static inline ALWAYS_INLINE u16 mask16(u32 addr, u16 clear, u16 set) {
+	u16 data;
+	__asm__ volatile("ldrh\t%0, [%1]\n"
+	                 "\tbic\t%0, %3\n"
+	                 "\torr\t%0, %2\n"
+	                 "\tstrh\t%0, [%1]"
+	                 : "=&l"(data)
+	                 : "l"(addr), "l"(set), "l"(clear));
+	return data;
 }
 
-static inline ALWAYS_INLINE u8 read8(u32 addr)
-{
-    u32 data;
-    __asm__ volatile ("ldrb\t%0, [%1]" : "=l" (data) : "l" (addr));
-    return data;
+static inline ALWAYS_INLINE u8 read8(u32 addr) {
+	u32 data;
+	__asm__ volatile("ldrb\t%0, [%1]" : "=l"(data) : "l"(addr));
+	return data;
 }
 
-static inline ALWAYS_INLINE void write8(u32 addr, u8 data)
-{
-    __asm__ volatile ("strb\t%0, [%1]" : : "l" (data), "l" (addr));
+static inline ALWAYS_INLINE void write8(u32 addr, u8 data) {
+	__asm__ volatile("strb\t%0, [%1]" : : "l"(data), "l"(addr));
 }
 
-static inline ALWAYS_INLINE u8 set8(u32 addr, u8 set)
-{
-    u8 data;
-    __asm__ volatile (
-        "ldrb\t%0, [%1]\n"
-        "\torr\t%0, %2\n"
-        "\tstrb\t%0, [%1]"
-        : "=&l" (data)
-        : "l" (addr), "l" (set)
-    );
-    return data;
+static inline ALWAYS_INLINE u8 set8(u32 addr, u8 set) {
+	u8 data;
+	__asm__ volatile("ldrb\t%0, [%1]\n"
+	                 "\torr\t%0, %2\n"
+	                 "\tstrb\t%0, [%1]"
+	                 : "=&l"(data)
+	                 : "l"(addr), "l"(set));
+	return data;
 }
 
-static inline ALWAYS_INLINE u8 clear8(u32 addr, u8 clear)
-{
-    u8 data;
-    __asm__ volatile (
-        "ldrb\t%0, [%1]\n"
-        "\tbic\t%0, %2\n"
-        "\tstrb\t%0, [%1]"
-        : "=&l" (data)
-        : "l" (addr), "l" (clear)
-    );
-    return data;
+static inline ALWAYS_INLINE u8 clear8(u32 addr, u8 clear) {
+	u8 data;
+	__asm__ volatile("ldrb\t%0, [%1]\n"
+	                 "\tbic\t%0, %2\n"
+	                 "\tstrb\t%0, [%1]"
+	                 : "=&l"(data)
+	                 : "l"(addr), "l"(clear));
+	return data;
 }
 
-static inline ALWAYS_INLINE u8 mask8(u32 addr, u8 clear, u8 set)
-{
-    u8 data;
-    __asm__ volatile (
-        "ldrb\t%0, [%1]\n"
-        "\tbic\t%0, %3\n"
-        "\torr\t%0, %2\n"
-        "\tstrb\t%0, [%1]"
-        : "=&l" (data)
-        : "l" (addr), "l" (set), "l" (clear)
-    );
-    return data;
+static inline ALWAYS_INLINE u8 mask8(u32 addr, u8 clear, u8 set) {
+	u8 data;
+	__asm__ volatile("ldrb\t%0, [%1]\n"
+	                 "\tbic\t%0, %3\n"
+	                 "\torr\t%0, %2\n"
+	                 "\tstrb\t%0, [%1]"
+	                 : "=&l"(data)
+	                 : "l"(addr), "l"(set), "l"(clear));
+	return data;
 }
 
 /*
@@ -186,29 +152,36 @@ void hexdump(const void *d, int len);
 void udelay(u32 d);
 void panic(u8 v);
 
-static inline ALWAYS_INLINE u32 get_cpsr(void)
-{
-    u32 data;
-    __asm__ volatile ( "mrs\t%0, cpsr" : "=r" (data) );
-    return data;
+static inline ALWAYS_INLINE u32 get_cpsr(void) {
+	u32 data;
+	__asm__ volatile("mrs\t%0, cpsr" : "=r"(data));
+	return data;
 }
 
-#define STACK_ALIGN(type, name, cnt, alignment)         \
-u8 _al__##name[((sizeof(type)*(cnt)) + (alignment) + \
-(((sizeof(type)*(cnt))%(alignment)) > 0 ? ((alignment) - \
-((sizeof(type)*(cnt))%(alignment))) : 0))]; \
-type *name = (type*)(((u32)(_al__##name)) + ((alignment) - (( \
-(u32)(_al__##name))&((alignment)-1))))
+#define STACK_ALIGN(type, name, cnt, alignment)                                                    \
+	u8 _al__##name[((sizeof(type) * (cnt)) + (alignment) +                                         \
+	                (((sizeof(type) * (cnt)) % (alignment)) > 0                                    \
+	                     ? ((alignment) - ((sizeof(type) * (cnt)) % (alignment)))                  \
+	                     : 0))];                                                                   \
+	type *name = (type *)(((u32)(_al__##name)) +                                                   \
+	                      ((alignment) - (((u32)(_al__##name)) & ((alignment) - 1))))
 
+#define ALIGN_MASK(x, m) (((x) + (m)) & ~(m))
+#define ALIGN_UP(x, a)   ALIGN_MASK(x, (__typeof__(x))(a) - 1)
+#define PTR_ALIGN_UP(x, a) (__typeof__(x))ALIGN_UP((uintptr_t)x, a)
 
-#define max(a, b) \
-    ({ __typeof__ (a) _a = (a); \
-       __typeof__ (b) _b = (b); \
-       _a > _b ? _a : _b; })
+#define max(a, b)                                                                                  \
+	({                                                                                             \
+		__typeof__(a) _a = (a);                                                                    \
+		__typeof__(b) _b = (b);                                                                    \
+		_a > _b ? _a : _b;                                                                         \
+	})
 
-#define min(a, b) \
-    ({ __typeof__ (a) _a = (a); \
-       __typeof__ (b) _b = (b); \
-       _a < _b ? _a : _b; })
+#define min(a, b)                                                                                  \
+	({                                                                                             \
+		__typeof__(a) _a = (a);                                                                    \
+		__typeof__(b) _b = (b);                                                                    \
+		_a < _b ? _a : _b;                                                                         \
+	})
 
 #endif

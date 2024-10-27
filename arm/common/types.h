@@ -14,26 +14,26 @@
 #define __TYPES_H__
 
 #include <inttypes.h>
-#include <stddef.h>
-#include <stdbool.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
 
-typedef uint8_t  u8;
+typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
 
-typedef int8_t   s8;
-typedef int16_t  s16;
-typedef int32_t  s32;
-typedef int64_t  s64;
+typedef int8_t s8;
+typedef int16_t s16;
+typedef int32_t s32;
+typedef int64_t s64;
 
-typedef volatile u8  vu8;
+typedef volatile u8 vu8;
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;
 typedef volatile u64 vu64;
 
-typedef volatile s8  vs8;
+typedef volatile s8 vs8;
 typedef volatile s16 vs16;
 typedef volatile s32 vs32;
 typedef volatile s64 vs64;
@@ -41,33 +41,39 @@ typedef volatile s64 vs64;
 #define NULL ((void *)0)
 
 #define ALWAYS_INLINE __attribute__((always_inline)) inline
-//gcc will sometimes sneak in memset calls which we 100% don't want in sram
-#define SRAM_TEXT __attribute__((section(".sram.text"))) __attribute__((optimize("no-tree-loop-distribute-patterns")))
-#define SRAM_DATA __attribute__((section(".sram.data")))
-//sometimes gcc will complain about section type conflicts with no further information
-//this works as a workaround
+// gcc will sometimes sneak in memset calls which we 100% don't want in sram
+#define SRAM_TEXT                                                                                  \
+	__attribute__((section(".sram.text")))                                                         \
+	__attribute__((optimize("no-tree-loop-distribute-patterns")))
+#define SRAM_DATA  __attribute__((section(".sram.data")))
+// sometimes gcc will complain about section type conflicts with no further information
+// this works as a workaround
 #define SRAM_DATA2 __attribute__((section(".sram.data2")))
-#define SRAM_STR(str) ({ static const SRAM_DATA2 char __str[] = str; __str; })
+#define SRAM_STR(str)                                                                              \
+	({                                                                                             \
+		static const SRAM_DATA2 char __str[] = str;                                                \
+		__str;                                                                                     \
+	})
 #define NORETURN __attribute__((__noreturn__))
 
 #define ALIGNED(x) __attribute__((aligned(x)))
-#define PACKED __attribute__((packed))
+#define PACKED     __attribute__((packed))
 
-#define STACK_ALIGN(type, name, cnt, alignment)         \
-    u8 _al__##name[((sizeof(type)*(cnt)) + (alignment) + \
-    (((sizeof(type)*(cnt))%(alignment)) > 0 ? ((alignment) - \
-    ((sizeof(type)*(cnt))%(alignment))) : 0))]; \
-    type *name = (type*)(((u32)(_al__##name)) + ((alignment) - (( \
-    (u32)(_al__##name))&((alignment)-1))))
+#define STACK_ALIGN(type, name, cnt, alignment)                                                    \
+	u8 _al__##name[((sizeof(type) * (cnt)) + (alignment) +                                         \
+	                (((sizeof(type) * (cnt)) % (alignment)) > 0                                    \
+	                     ? ((alignment) - ((sizeof(type) * (cnt)) % (alignment)))                  \
+	                     : 0))];                                                                   \
+	type *name = (type *)(((u32)(_al__##name)) +                                                   \
+	                      ((alignment) - (((u32)(_al__##name)) & ((alignment) - 1))))
 
-
-#define INT_MAX ((s32)0x7fffffff)
+#define INT_MAX  ((s32)0x7fffffff)
 #define UINT_MAX ((u32)0xffffffff)
 
-//#define LONG_MAX INT_MAX
-//#define ULONG_MAX UINT_MAX
+// #define LONG_MAX INT_MAX
+// #define ULONG_MAX UINT_MAX
 
-//#define LLONG_MAX ((s64)0x7fffffffffffffff)
-//#define ULLONG_MAX ((u64)0xffffffffffffffff)
+// #define LLONG_MAX ((s64)0x7fffffffffffffff)
+// #define ULLONG_MAX ((u64)0xffffffffffffffff)
 
 #endif
