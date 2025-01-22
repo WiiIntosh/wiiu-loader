@@ -1,4 +1,4 @@
-FROM devkitpro/devkitarm:20240918
+FROM devkitpro/devkitarm:20250102
 
 RUN apt-get update -y && apt-get install --no-install-recommends -y \
 	python3 \
