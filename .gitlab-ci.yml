@@ -20,7 +20,7 @@ loader-build:
     script:
     - sed s/B5XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DEFINITELY_LEGAL}/g -i castify.py
     - sed s/91XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DO_THEY_EVEN_CARE}/g -i castify.py
-    - make
+    - make -j$(nproc)
     artifacts:
         paths:
         - fw.img
