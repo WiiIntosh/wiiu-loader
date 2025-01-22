@@ -5,17 +5,15 @@ stages:
     - build
 
 container-build:
-    stage: container
-    image: docker:stable
-    services:
-        - docker:dind
-    script:
-        - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
-        - docker build -t "${CI_REGISTRY}/linux-wiiu/linux-loader/ci" .
-        - docker push "${CI_REGISTRY}/linux-wiiu/linux-loader/ci"
-    only:
-        changes:
-            - Dockerfile
+  stage: container
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY}/linux-wiiu/linux-loader/ci"
 
 loader-build:
     stage: build
