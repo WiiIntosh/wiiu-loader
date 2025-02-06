@@ -41,6 +41,7 @@
 #include "ipc_protocol.h"
 
 static const char *kernel_locs[] = {"sdmc:/linux/dtbImage.wiiu", "sdmc:/linux/kernel"};
+static const char *initrd_locs[] = {"sdmc:/linux/petitboot.cpio.xz", "sdmc:/linux/initrd.gz"};
 
 struct LoaderConfig {
 	char defaultProfile[64];
@@ -72,6 +73,7 @@ struct wiiu_ppc_data {
 };
 static struct wiiu_ppc_data *ppc_data = (void *)0x89200000;
 extern char __heap_end__; // Start of usable MEM2 scratch
+static void *mem2_offset;
 
 #define LT_IPC_ARMCTRL_COMPAT_X1 0x4
 #define LT_IPC_ARMCTRL_COMPAT_Y1 0x1
@@ -156,11 +158,36 @@ static int config_handler(void *user, const char *section, const char *name, con
 	return 1;
 }
 
+static int load_initrd(const char* path) {
+	if (strlen(path) <= 0)
+		return -1;
+
+	FILE *initrd_file = fopen(path, "rb");
+	if (!initrd_file)
+		return -2;
+
+	fseek(initrd_file, 0L, SEEK_END);
+	ppc_data->initrd_sz = ftell(initrd_file);
+	fseek(initrd_file, 0L, SEEK_SET);
+
+	mem2_offset = PTR_ALIGN_UP(mem2_offset, 0x10000);
+	ppc_data->initrd = mem2_offset;
+	mem2_offset += ppc_data->initrd_sz;
+
+	printf("[INFO] Loading initrd into 0x%08X, size 0x%X...\n",
+		   (unsigned int)ppc_data->initrd, ppc_data->initrd_sz);
+	fread(ppc_data->initrd, ppc_data->initrd_sz, 1, initrd_file);
+	fclose(initrd_file);
+	write32((unsigned int)&ppc_data->magic, WIIU_LOADER_MAGIC);
+
+	return 0;
+}
+
 void NORETURN app_run() {
 	int res;
 	bool kernel_loaded = false;
 	/* Write data for Linux kernel (initrd etc.) after the end of our own heap. */
-	void *mem2_offset = &__heap_end__;
+	mem2_offset = &__heap_end__;
 
 	/* Clear out the PowerPC comms area */
 	memset(ppc_data, 0, sizeof(*ppc_data));
@@ -194,25 +221,7 @@ void NORETURN app_run() {
 		}
 
 		/*  Load initrd */
-		if (strlen(profiles[profileNdx].initrdPath) > 0) {
-			FILE *initrd_file = fopen(profiles[profileNdx].initrdPath, "rb");
-			if (initrd_file) {
-				fseek(initrd_file, 0L, SEEK_END);
-				ppc_data->initrd_sz = ftell(initrd_file);
-				fseek(initrd_file, 0L, SEEK_SET);
-
-				mem2_offset = PTR_ALIGN_UP(mem2_offset, 0x10000);
-				ppc_data->initrd = mem2_offset;
-				mem2_offset += ppc_data->initrd_sz;
-
-				printf("[INFO] Loading initrd into 0x%08X, size 0x%X...\n",
-				       (unsigned int)ppc_data->initrd, ppc_data->initrd_sz);
-				fread(ppc_data->initrd, ppc_data->initrd_sz, 1, initrd_file);
-				fclose(initrd_file);
-				write32((unsigned int)&ppc_data->magic, WIIU_LOADER_MAGIC);
-			}
-		}
-
+		load_initrd(profiles[profileNdx].initrdPath);
 		dc_flushall();
 	}
 
@@ -223,12 +232,19 @@ void NORETURN app_run() {
 	/* If that failed, use the default kernel locations */
 	if (!kernel_loaded) {
 		/* Try each deafault location */
-		for (int i = 0; i < sizeof(kernel_locs) / sizeof(const char *); i++) {
+		for (int i = 0; i < ARRAY_SIZE(kernel_locs); i++) {
 			printf("[INFO] Trying to load kernel from %s...\n", kernel_locs[i]);
 			res = ppc_load_file(kernel_locs[i], &ppc_entry);
 			if (res >= 0) {
 				kernel_loaded = true;
 				break;
+			}
+		}
+		/* If we used a default kernel, try a default initrd too */
+		if (kernel_loaded) {
+			for (int i = 0; i < ARRAY_SIZE(initrd_locs); i++) {
+				printf("[INFO] Trying to load initrd from %s...\n", initrd_locs[i]);
+				if (load_initrd(initrd_locs[i]) == 0) break;
 			}
 		}
 	}

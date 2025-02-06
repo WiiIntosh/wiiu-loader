@@ -184,4 +184,6 @@ static inline ALWAYS_INLINE u32 get_cpsr(void) {
 		_a < _b ? _a : _b;                                                                         \
 	})
 
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+
 #endif
