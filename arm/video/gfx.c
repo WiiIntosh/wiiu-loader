@@ -9,7 +9,7 @@
  */
 
 #include "gfx.h"
-#include "lw-logo.h"
+#include "wiiintosh-logo.h"
 #include "system/serial.h"
 #include <stdio.h>
 
@@ -22,6 +22,8 @@ struct {
 	u32* ptr;
 	int width;
 	int height;
+	int actual_width;
+	int actual_height;
 	size_t bpp;
 
 	int current_y;
@@ -32,6 +34,8 @@ struct {
 		.ptr = (u32*)(0x14000000 + 0x3500000),
 		.width = 1280,
 		.height = 720,
+		.actual_width = 1280,
+		.actual_height = 720,
 		.bpp = 4,
 
 		.current_y = 10,
@@ -42,6 +46,8 @@ struct {
 		.ptr = (u32*)(0x14000000 + 0x38C0000),
 		.width = 896,
 		.height = 504,
+		.actual_width = 854,
+		.actual_height = 480,
 		.bpp = 4,
 
 		.current_y = 10,
@@ -90,35 +96,21 @@ void SRAM_TEXT gfx_clear(gfx_screen_t screen, u32 color)
 	}
 }
 
-#define LOGO_TV_SCALE 13
-#define LOGO_DRC_SCALE 8
-#define LOGO_X(gfx, scale) ((fbs[gfx].width - (LOGO_W * scale)) / 2)
-#define LOGO_Y(gfx, scale) ((fbs[gfx].height - (LOGO_H * scale)) / 2)
+//
+// Logo: convert -depth 8 wiiintosh-logo.bmp gray:wiiintosh-logo.bin
+//       xxd -i wiiintosh-logo.bin wiiintosh-logo.h
+//
+
+#define LOGO_X(gfx) ((fbs[gfx].actual_width - LOGO_W) / 2)
+#define LOGO_Y(gfx) ((fbs[gfx].actual_height - LOGO_H) / 2)
 
 void SRAM_TEXT gfx_draw_logo(gfx_screen_t screen) {
-	if (screen == GFX_TV) {
-		for (int y = 0; y < LOGO_H; y++) {
-			for (int x = 0; x < LOGO_W; x++) {
-				for (int y2 = 0; y2 < LOGO_TV_SCALE; y2++) {
-					for (int x2 = 0; x2 < LOGO_TV_SCALE; x2++) {
-						int x3 = (x * LOGO_TV_SCALE) + x2 + LOGO_X(GFX_TV, LOGO_TV_SCALE);
-						int y3 = (y * LOGO_TV_SCALE) + y2 + LOGO_Y(GFX_TV, LOGO_TV_SCALE);
-						fbs[screen].ptr[x3 + y3*fbs[screen].width] = ((uint32_t*)lw_logo)[x + y*LOGO_W];
-					}
-				}
-			}
-		}
-	} else if (screen == GFX_DRC) {
-		for (int y = 0; y < LOGO_H; y++) {
-			for (int x = 0; x < LOGO_W; x++) {
-				for (int y2 = 0; y2 < LOGO_DRC_SCALE; y2++) {
-					for (int x2 = 0; x2 < LOGO_DRC_SCALE; x2++) {
-						int x3 = (x * LOGO_DRC_SCALE) + x2 + LOGO_X(GFX_DRC, LOGO_DRC_SCALE);
-						int y3 = (y * LOGO_DRC_SCALE) + y2 + LOGO_Y(GFX_DRC, LOGO_DRC_SCALE);
-						fbs[screen].ptr[x3 + y3*fbs[screen].width] = ((uint32_t*)lw_logo)[x + y*LOGO_W];
-					}
-				}
-			}
+	for (int y = 0; y < LOGO_H; y++) {
+		for (int x = 0; x < LOGO_W; x++) {
+			int x2 = x + LOGO_X(screen);
+			int y2 = y + LOGO_Y(screen);
+			uint32_t data = wiiintosh_logo[x + y*LOGO_W];
+			fbs[screen].ptr[x2 + y2 * fbs[screen].width] = (0xFF << 24) | (data << 16) | (data << 8) | (data);
 		}
 	}
 }
