@@ -23,10 +23,9 @@
 #ifndef __IPC_PROTOCOL_H__
 #define __IPC_PROTOCOL_H__
 
-#define CMD_POWEROFF 0xCAFE0001
-#define CMD_REBOOT   0xCAFE0002
-
-#define CMD_MASK  0xFF000000
-#define CMD_PRINT 0x01000000
+#define CMD_POWEROFF    0xCAFE0001
+#define CMD_REBOOT      0xCAFE0002
+#define CMD_PRINT       0xCAFE6400
+#define CMD_PRINT_MASK  0xFFFFFF00
 
 #endif //__IPC_PROTOCOL_H__

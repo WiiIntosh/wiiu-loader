@@ -30,7 +30,7 @@ static int _check_physaddr(u32 addr) {
     if((addr <= 0x01FFFFFF))
         return 1;
 
-    if((addr >= 0x14000000) && (addr <= 0x1CFFFFFF))
+    if((addr >= 0x11000000) && (addr <= 0x1CFFFFFF))
         return 2;
 
     if((addr >= 0x28000000) && (addr <= 0xCFFFFFFF))

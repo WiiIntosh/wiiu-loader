@@ -9,10 +9,10 @@ from Cryptodome.Hash import SHA
 
 #To get the IV: Compile dimok789/FIX94's iosuhax, copy them out of scripts/keys.py.
 #make sure to capitalise all the letters
-key = b16decode(b"B5XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-iv = b16decode(b"91XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+#key = b16decode(b"B5XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+#iv = b16decode(b"91XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 
-no_crypto = False
+no_crypto = True
 
 loaderfile = sys.argv[1]
 elffile = sys.argv[2]
