@@ -9,8 +9,10 @@
  */
 
 #include "gfx.h"
-#include "wiiintosh-logo.h"
+#include "system/abif.h"
+#include "system/latte_gpu.h"
 #include "system/serial.h"
+#include "wiiintosh-logo.h"
 #include <stdio.h>
 
 extern const u8 msx_font[];
@@ -31,7 +33,7 @@ struct {
 } fbs[GFX_ALL] SRAM_DATA = {
 	[GFX_TV] =
 	{
-		.ptr = (u32*)(0x14000000 + 0x3500000),
+		.ptr = 0,
 		.width = 1280,
 		.height = 720,
 		.actual_width = 1280,
@@ -43,7 +45,7 @@ struct {
 	},
 	[GFX_DRC] =
 	{
-		.ptr = (u32*)(0x14000000 + 0x38C0000),
+		.ptr = 0,
 		.width = 896,
 		.height = 504,
 		.actual_width = 854,
@@ -54,6 +56,12 @@ struct {
 		.current_x = 10,
 	},
 };
+
+void SRAM_TEXT gfx_init(void)
+{
+	fbs[GFX_TV].ptr = (u32*) abif_gpu_read32(D1GRPH + DGRPH_PRIMARY_SURFACE_ADDRESS);
+	fbs[GFX_DRC].ptr = (u32*) abif_gpu_read32(D2GRPH + DGRPH_PRIMARY_SURFACE_ADDRESS);
+}
 
 size_t SRAM_TEXT gfx_get_stride(gfx_screen_t screen)
 {

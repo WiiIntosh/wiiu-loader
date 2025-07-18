@@ -25,6 +25,7 @@ typedef enum {
 	GFX_ALL,
 } gfx_screen_t;
 
+void gfx_init(void);
 void gfx_draw_plot(gfx_screen_t screen, int x, int y, u32 color);
 void gfx_clear(gfx_screen_t screen, u32 color);
 void gfx_draw_string(gfx_screen_t screen, const char* str, int x, int y, u32 color);
