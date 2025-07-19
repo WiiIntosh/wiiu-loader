@@ -13,6 +13,9 @@
 #include "latte.h"
 #include "latte_gpu.h"
 
+#define CAFE_GFX_TV_BASE    0x8F400000
+#define CAFE_GFX_DRC_BASE   0x8FE00000
+
 static ALWAYS_INLINE u32 __abif_read(u32 offs) {
     write32(LT_ABIF_CPLTL_OFFSET, offs);
     return read32(LT_ABIF_CPLTL_DATA);
@@ -49,4 +52,8 @@ void abif_gpu_setup(void) {
 
     abif_gpu_write32(D1GRPH + DGRPH_SWAP_CNTL, crossbar);
     abif_gpu_write32(D2GRPH + DGRPH_SWAP_CNTL, crossbar);
+
+    // Move framebuffer memories to end of MEM2.
+    abif_gpu_write32(D1GRPH + DGRPH_PRIMARY_SURFACE_ADDRESS, CAFE_GFX_TV_BASE);
+    abif_gpu_write32(D2GRPH + DGRPH_PRIMARY_SURFACE_ADDRESS, CAFE_GFX_DRC_BASE);
 }
