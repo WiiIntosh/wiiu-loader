@@ -25,6 +25,7 @@
 
 #define CMD_POWEROFF    0xCAFE0001
 #define CMD_REBOOT      0xCAFE0002
+#define CMD_RTC_BIAS    0xCAFE0003
 #define CMD_PRINT       0xCAFE6400
 #define CMD_PRINT_MASK  0xFFFFFF00
 

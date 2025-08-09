@@ -45,6 +45,44 @@
 #define LT_IPC_ARMCTRL_COMPAT_Y1 0x1
 
 u32 SRAM_DATA ppc_entry = 0;
+u32 SRAM_DATA rtc_bias = 0;
+
+static u32 read_rtc_bias() {
+	//
+	// Read the RTC counter bias from rtc.xml on slc. Credit: Rairii
+	//
+    u32 RtcBias = 0;
+    FILE* fRtc = fopen("slc:/sys/config/rtc.xml", "rb");
+    if (fRtc != NULL) {
+        char data[2048] = {0};
+        fread(data, 1, sizeof (data), fRtc);
+        fclose(fRtc);
+        char *rtcEnd = strstr(data, "</rtc_offset>");
+        if (rtcEnd != NULL) {
+            char *ptr = rtcEnd - 1;
+            char *rtcStart = rtcEnd - 1;
+            while (rtcStart[-1] != '>') {
+				rtcStart--;
+			}
+            *rtcEnd = 0;
+            u32 base = 1;
+            while (ptr >= rtcStart) {
+                char chr = ptr[0];
+                if (chr < '0' || chr > '9') {
+					break;
+				}
+                RtcBias += (base * (chr - '0'));
+                base *= 10;
+                ptr--;
+            }
+        }
+    }
+
+    if (RtcBias == 0) {
+		printf("Failed to read or parse RTC bias from SLC\n");
+	}
+	return RtcBias;
+} 
 
 static void SRAM_TEXT NORETURN app_run_sram() {
 	// Uncomment to completely erase linux-loader from MEM2
@@ -66,6 +104,8 @@ static void SRAM_TEXT NORETURN app_run_sram() {
 			smc_shutdown(false);
 		} else if (msg == CMD_REBOOT) {
 			smc_shutdown(true);
+		} else if (msg == CMD_RTC_BIAS) {
+			write32(LT_IPC_ARMMSG_COMPAT, rtc_bias);
 		} else if ((msg & CMD_PRINT_MASK) == CMD_PRINT) {
 			char str[2];
 			str[0] = msg & 0xFF;
@@ -90,6 +130,9 @@ void NORETURN app_run() {
 		panic(0);
 	}
 	printf("[ OK ] Loaded OpenBIOS (%d). Entry is %08lX.\n", res, ppc_entry);
+
+	// Read RTC bias for IPC use.
+	rtc_bias = read_rtc_bias();
 
 	// Shut everything down, ready for SRAM switch
 	ELM_Unmount();
