@@ -65,6 +65,9 @@ void NORETURN _main(void *base) {
 
 	// Quiesce DSP
 	clear32(LT_RESETS_COMPAT, 0x400000);
+	udelay(100);
+	set32(LT_RESETS_COMPAT, 0x400000);
+	udelay(100);
 	printf("[ OK ] Paused DSP\n");
 
 	int res = ELM_Mount();
