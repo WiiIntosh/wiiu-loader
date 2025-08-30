@@ -13,7 +13,7 @@
 #include "latte.h"
 #include "latte_gpu.h"
 
-#define CAFE_GFX_TV_BASE    0x8F400000
+#define CAFE_GFX_TV_BASE    0x8F000000
 #define CAFE_GFX_DRC_BASE   0x8FE00000
 
 static ALWAYS_INLINE u32 __abif_read(u32 offs) {
